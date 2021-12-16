@@ -48,7 +48,7 @@ class _SearchHomeState extends State<SearchHome> {
   Future getSearchResults() async {
     var list = <String?>['foo', 'bar', 'baz'];
     String searchStr =
-        'http://www.google.com/search?q=site:stackoverflow.com/users -"Keeping a low profile."+"flutter+developer"+"hyderabad"-"0 * reputation"';
+        'http://www.google.com/search?q=site:$_selectedPortal.com/users -"Keeping a low profile."+"flutter+developer"+"hyderabad"-"0 * reputation"';
     hitUrl(searchStr: searchStr);
     return list;
   }
@@ -110,44 +110,59 @@ class _SearchHomeState extends State<SearchHome> {
                                 child: const Center(child: Text('LinkedIn')),
                               ),
                               onTap: () {
-                                _selectedPortal = "LinkedIn";
+                                _selectedPortal = "linkedin";
                               },
                             ),
-                            Container(
-                              margin: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  color: Colors.purple,
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(50.0))),
-                              width: MediaQuery.of(context).size.width * .1,
-                              //  color: Colors.purple,
-                              child:
-                                  const Center(child: Text('Stack Overflow')),
+                            GestureDetector(
+                              child: Container(
+                                margin: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    color: Colors.purple,
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(50.0))),
+                                width: MediaQuery.of(context).size.width * .1,
+                                //  color: Colors.purple,
+                                child:
+                                    const Center(child: Text('Stack Overflow')),
+                              ),
+                              onTap: () {
+                                _selectedPortal = "stackoverflow";
+                              },
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .1,
-                              height: MediaQuery.of(context).size.width * .1,
-                              margin: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  color: Colors.pink,
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(50.0))),
-                              child: const Center(child: Text('Git Hub')),
+                            GestureDetector(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * .1,
+                                height: MediaQuery.of(context).size.width * .1,
+                                margin: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    color: Colors.pink,
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(50.0))),
+                                child: const Center(child: Text('Git Hub')),
+                              ),
+                              onTap: () {
+                                _selectedPortal = "github";
+                              },
                             ),
-                            Container(
-                              margin: const EdgeInsets.all(20),
-                              width: MediaQuery.of(context).size.width * .1,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  color: Colors.green,
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(50.0))),
-                              child: const Center(child: Text('Indeed')),
+                            GestureDetector(
+                              child: Container(
+                                margin: const EdgeInsets.all(20),
+                                width: MediaQuery.of(context).size.width * .1,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    color: Colors.green,
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(50.0))),
+                                child: const Center(child: Text('Indeed')),
+                              ),
+                              onTap: () {
+                                _selectedPortal = "indeed";
+                              },
                             ),
                           ],
                         ),
