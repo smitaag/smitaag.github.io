@@ -13,12 +13,15 @@ class SearchHome extends StatefulWidget {
 class _SearchHomeState extends State<SearchHome> {
   String? _portal;
   String? _keyword;
+  String? _location;
+  String? _jobtitle;
   String? _exclude;
+  String? infoMsg;
   bool refreshUI = false;
   List<String> _searchResults = [];
   final List<String> _platformsList = <String>[
     'LinkedIn',
-    'Indeed',
+    'Dribbble',
     'Github',
     'StackOverflow'
   ];
@@ -46,9 +49,50 @@ class _SearchHomeState extends State<SearchHome> {
   }
 
   Future getSearchResults() async {
-    var list = <String?>['foo', 'bar', 'baz'];
-    String searchStr =
-        'http://www.google.com/search?q=site:$_selectedPortal.com/users -"Keeping a low profile."+"flutter+developer"+"hyderabad"-"0 * reputation"';
+    var list = <String?>[''];
+    String searchStr;
+    switch (_selectedPortal) {
+      case 'linkedin':
+        //"Software+Engineer" - job title
+        //HTML - keyword
+        //"Intern"- exclude word
+        //+"Current+%2A+Google+%2A+" - curret employer
+        //http: //www.google.com/search?q=+"Software+Engineer"+"HTML" -"Intern" -intitle:"profiles" -inurl:"dir/+"+site:www.linkedin.com/in/+OR+site:www.linkedin.com/pub/+"Current+%2A+Google+%2A+"
+        searchStr =
+            'http://www.google.com/search?q=+"$_keyword"-"$_exclude" -intitle:"profiles" -inurl:"dir/+"+site:www.$_selectedPortal.com/in/+OR+site:www.$_selectedPortal.com/pub/';
+        break;
+      case 'stackoverflow':
+        //"HTML+Developer" - keywords
+        //"Berlin" - City/Country
+        //http://www.google.com/search?q=site:stackoverflow.com/users -"Keeping a low profile."+"HTML+Developer"+"Berlin"
+        searchStr =
+            'http://www.google.com/search?q=site:$_selectedPortal.com/users -"Keeping a low profile."+"flutter+developer"+"hyderabad"-"0 * reputation"';
+        break;
+      case 'github':
+        //"PHP+Developer" - keywords
+        //"Paris" - Location
+        //http://www.google.com/search?q=site:github.com+"joined on" -intitle:"at master" -inurl:"tab" -inurl:"jobs." -inurl:"articles"+"PHP+Developer"+"Paris"
+
+        searchStr =
+            'http://www.google.com/search?q=site:$_selectedPortal.com+"joined on" -intitle:"at master" -inurl:"tab" -inurl:"jobs." -inurl:"articles"+"$_keyword"+"$_location"';
+
+        break;
+      // case 'indeed':
+      //   searchStr =
+      //       'http://www.google.com/search?q=site:$_selectedPortal.com/users -"Keeping a low profile."+"$_keyword"+"$_location"-"0 * reputation"';
+      //   break;
+      case 'dribbble':
+        //site:dribble.com -inurl:(followers|type|members|following|jobs|designers|players|buckets|places|skills|projects|tags|search|stories|users|draftees|likes|lists) -intitle:(following|likes) -"Hire Us"  "fghdfg" -"dfghdfg"
+        //http://www.google.com/search?q=site:dribbble.com -inurl:(followers|type|members|following|jobs|designers|players|buckets|places|skills|projects|tags|search|stories|users|draftees|likes|lists) -intitle:(following|likes) -"Hire Us" +"kkkk" -"yyyy"
+        searchStr =
+            'http://www.google.com/search?q=site:$_selectedPortal.com -inurl:(followers|type|members|following|jobs|designers|players|buckets|places|skills|projects|tags|search|stories|users|draftees|likes|lists) -intitle:(following|likes) -"Hire Us"+"$_keyword"-"$_location"';
+        break;
+
+      default:
+        searchStr =
+            'http://www.google.com/search?q=+"$_keyword"-"$_exclude"+site:www.$_selectedPortal.com';
+    }
+
     hitUrl(searchStr: searchStr);
     return list;
   }
@@ -110,7 +154,9 @@ class _SearchHomeState extends State<SearchHome> {
                                 child: const Center(child: Text('LinkedIn')),
                               ),
                               onTap: () {
-                                _selectedPortal = "linkedin";
+                                setState(() {
+                                  _selectedPortal = "linkedin";
+                                });
                               },
                             ),
                             GestureDetector(
@@ -128,7 +174,9 @@ class _SearchHomeState extends State<SearchHome> {
                                     const Center(child: Text('Stack Overflow')),
                               ),
                               onTap: () {
-                                _selectedPortal = "stackoverflow";
+                                setState(() {
+                                  _selectedPortal = "stackoverflow";
+                                });
                               },
                             ),
                             GestureDetector(
@@ -145,7 +193,9 @@ class _SearchHomeState extends State<SearchHome> {
                                 child: const Center(child: Text('Git Hub')),
                               ),
                               onTap: () {
-                                _selectedPortal = "github";
+                                setState(() {
+                                  _selectedPortal = "github";
+                                });
                               },
                             ),
                             GestureDetector(
@@ -158,10 +208,12 @@ class _SearchHomeState extends State<SearchHome> {
                                     shape: BoxShape.rectangle,
                                     borderRadius: const BorderRadius.all(
                                         Radius.circular(50.0))),
-                                child: const Center(child: Text('Indeed')),
+                                child: const Center(child: Text('Dribbble')),
                               ),
                               onTap: () {
-                                _selectedPortal = "indeed";
+                                setState(() {
+                                  _selectedPortal = "dribbble";
+                                });
                               },
                             ),
                           ],
@@ -273,13 +325,13 @@ class _SearchHomeState extends State<SearchHome> {
                               style: const TextStyle(
                                   color: Colors.amber, fontSize: 20),
                               decoration: CommonStyle.textFieldStyle(
-                                  labelTextStr: "For example India, USA etc",
+                                  labelTextStr: "City or Country",
                                   hintTextStr: ""),
                               keyboardType: TextInputType.text,
-                              onSaved: (value) => _keyword = value,
+                              onSaved: (value) => _location = value,
                               onChanged: (value) {
                                 setState(() {
-                                  _keyword = value;
+                                  _location = value;
                                 });
                               },
                             ),
@@ -313,10 +365,10 @@ class _SearchHomeState extends State<SearchHome> {
                                     "For example Project Manager, Co-founder etc",
                                 hintTextStr: ""),
                             keyboardType: TextInputType.text,
-                            onSaved: (value) => _exclude = value,
+                            onSaved: (value) => _jobtitle = value,
                             onChanged: (value) {
                               setState(() {
-                                _exclude = value;
+                                _jobtitle = value;
                               });
                             },
                           )),
@@ -334,18 +386,32 @@ class _SearchHomeState extends State<SearchHome> {
                         : (Text(
                             "So..you wanted to search for $_keyword and want to exclude words like $_exclude")))
                     : Container(),
+                (_selectedPortal != null)
+                    ? Text(
+                        "Cool..you have selected $_selectedPortal, now go on.. and select your criteria for search.",
+                        style:
+                            TextStyle(color: Colors.indigo[900], fontSize: 22),
+                      )
+                    : Container(),
                 Container(
                   margin: const EdgeInsets.all(20),
                   child: MaterialButton(
                     child: const Text("Start searching"),
                     color: Colors.white,
                     onPressed: () {
-                      setState(() {
-                        refreshUI = true;
-                      });
+                      if (_selectedPortal != null) {
+                        setState(() {
+                          refreshUI = true;
+                        });
+                      } else {
+                        setState(() {
+                          infoMsg = "Where do we look, select a portal first";
+                        });
+                      }
                     },
                   ),
                 ),
+                Text(infoMsg ?? ""),
                 (refreshUI)
                     ? Divider(
                         height: MediaQuery.of(context).size.height * .1,
