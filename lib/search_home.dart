@@ -104,6 +104,7 @@ class _SearchHomeState extends State<SearchHome> {
         searchStr =
             'http://www.google.com/search?q=+"$_keyword"-"$_exclude"+site:www.$_selectedPortal.com';
     }
+    //ljhkjlkj
 
     hitUrl(searchStr: searchStr);
     return list;
