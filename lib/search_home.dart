@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:super_search/url_service.dart';
 
@@ -53,13 +54,23 @@ class _SearchHomeState extends State<SearchHome> {
     String searchStr;
     switch (_selectedPortal) {
       case 'linkedin':
-        //"Software+Engineer" - job title
+        //http://www.google.com/search?q=+"director+of+engineering"+"leoforce" -intitle:"profiles" -inurl:"dir/+"+site:in.linkedin.com/in/+OR+site:in.linkedin.com/pub/
+        //http://www.google.com/search?q=+"director of engineering"+"leoforce" -intitle:"profiles" -inurl:"dir/+"+site:www.linkedin.com/in/+OR+site:www.linkedin.com/pub/
+
+        //"http://www.google.com/search?q=+"leoforce"-"null" -intitle:"profiles" -inurl:"dir/+"+site:www.linkedin.com/in/+OR+site:www.linkedin.com/pub/"
+        // //"Software+Engineer" - job title
         //HTML - keyword
         //"Intern"- exclude word
         //+"Current+%2A+Google+%2A+" - curret employer
         //http: //www.google.com/search?q=+"Software+Engineer"+"HTML" -"Intern" -intitle:"profiles" -inurl:"dir/+"+site:www.linkedin.com/in/+OR+site:www.linkedin.com/pub/+"Current+%2A+Google+%2A+"
+        //site: in.linked.com --- *** in. is for country code INDIA
+        String excludeStr = (_exclude != null) ? ('-"$_exclude"') : "";
         searchStr =
-            'http://www.google.com/search?q=+"$_keyword"-"$_exclude" -intitle:"profiles" -inurl:"dir/+"+site:www.$_selectedPortal.com/in/+OR+site:www.$_selectedPortal.com/pub/';
+            'http://www.google.com/search?q=+"$_jobtitle"+"$_keyword" $excludeStr-intitle:"profiles" -inurl:"dir/+"+site:in.$_selectedPortal.com/in/+OR+site:in.$_selectedPortal.com/pub/';
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print(searchStr);
+        }
         break;
       case 'stackoverflow':
         //"HTML+Developer" - keywords
@@ -71,10 +82,11 @@ class _SearchHomeState extends State<SearchHome> {
       case 'github':
         //"PHP+Developer" - keywords
         //"Paris" - Location
+        //"http://www.google.com/search?q=site:github.com+"joined on" -intitle:"at master" -inurl:"tab" -inurl:"jobs." -inurl:"articles"+"leoforce"+"hyderabad""
         //http://www.google.com/search?q=site:github.com+"joined on" -intitle:"at master" -inurl:"tab" -inurl:"jobs." -inurl:"articles"+"PHP+Developer"+"Paris"
-
+        String? locStr = (_location != null) ?  + "_location" : "";
         searchStr =
-            'http://www.google.com/search?q=site:$_selectedPortal.com+"joined on" -intitle:"at master" -inurl:"tab" -inurl:"jobs." -inurl:"articles"+"$_keyword"+"$_location"';
+            'http://www.google.com/search?q=site:$_selectedPortal.com+"joined on" -intitle:"at master" -inurl:"tab" -inurl:"jobs." -inurl:"articles"+"$_keyword" $locStr';
 
         break;
       // case 'indeed':
@@ -155,6 +167,7 @@ class _SearchHomeState extends State<SearchHome> {
                               ),
                               onTap: () {
                                 setState(() {
+                                  refreshUI = false;
                                   _selectedPortal = "linkedin";
                                 });
                               },
@@ -175,6 +188,7 @@ class _SearchHomeState extends State<SearchHome> {
                               ),
                               onTap: () {
                                 setState(() {
+                                  refreshUI = false;
                                   _selectedPortal = "stackoverflow";
                                 });
                               },
@@ -194,6 +208,7 @@ class _SearchHomeState extends State<SearchHome> {
                               ),
                               onTap: () {
                                 setState(() {
+                                  refreshUI = false;
                                   _selectedPortal = "github";
                                 });
                               },
@@ -212,6 +227,7 @@ class _SearchHomeState extends State<SearchHome> {
                               ),
                               onTap: () {
                                 setState(() {
+                                  refreshUI = false;
                                   _selectedPortal = "dribbble";
                                 });
                               },
@@ -254,6 +270,7 @@ class _SearchHomeState extends State<SearchHome> {
                               onSaved: (value) => _keyword = value,
                               onChanged: (value) {
                                 setState(() {
+                                  refreshUI = false;
                                   _keyword = value;
                                 });
                               },
@@ -291,6 +308,7 @@ class _SearchHomeState extends State<SearchHome> {
                             onSaved: (value) => _exclude = value,
                             onChanged: (value) {
                               setState(() {
+                                refreshUI = false;
                                 _exclude = value;
                               });
                             },
@@ -331,6 +349,7 @@ class _SearchHomeState extends State<SearchHome> {
                               onSaved: (value) => _location = value,
                               onChanged: (value) {
                                 setState(() {
+                                  refreshUI = false;
                                   _location = value;
                                 });
                               },
@@ -368,6 +387,7 @@ class _SearchHomeState extends State<SearchHome> {
                             onSaved: (value) => _jobtitle = value,
                             onChanged: (value) {
                               setState(() {
+                                refreshUI = false;
                                 _jobtitle = value;
                               });
                             },
